@@ -1,12 +1,13 @@
 package com.example.jothm.songapp;
 
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.github.axet.vget.VGet;
+import com.github.axet.wget.WGet;
 import com.mpatric.mp3agic.ID3v24Tag;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
@@ -24,7 +25,7 @@ public class MainApp extends AppCompatActivity {
     ID3v24Tag tags;
     ImageHandler albumImg;
     File rawmp3;
-    VGet downloader;
+    WGet downloader;
     String home;
 
     @Override
@@ -52,17 +53,14 @@ public class MainApp extends AppCompatActivity {
             e.printStackTrace();
         }
 
-//        try {
-//            downloader = new VGet(new URL("www.sample.com/sample.mp3"));
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        }
+        new mp3Downloader().start();
 
         tags = new ID3v24Tag();
         tags.setAlbum("album");
         tags.setAlbumArtist("artist");
         tags.setArtist("artist");
         tags.setTitle("title");
+        tags.setYear("1999");
         tags.setAlbumImage(albumImg.getImageBytes(), "image/jpeg");
         song.setId3v2Tag(tags);
     }
@@ -85,5 +83,15 @@ public class MainApp extends AppCompatActivity {
 
     public void downloadMP3(View view){
         downloader.download();
+    }
+
+    private class mp3Downloader extends Thread{
+        public void run(){
+            try{
+                downloader = new WGet(new URL("https://www.youtube.com/watch?v=i_y-6z02rY8"), new File(home));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

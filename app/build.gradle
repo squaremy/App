@@ -26,5 +26,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation files('libs/mp3agic-0.9.0.jar')
-    implementation files('libs/vget-1.1.23.jar')
+    implementation files('libs/wget-1.4.9.jar')
 }
