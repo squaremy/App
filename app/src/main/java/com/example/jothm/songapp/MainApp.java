@@ -87,11 +87,13 @@ public class MainApp extends AppCompatActivity {
 
     private class mp3Downloader extends Thread{
         public void run(){
-            try{
-                downloader = new WGet(new URL("https://www.youtube.com/watch?v=i_y-6z02rY8"), new File(home));
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
+            Log.d("DOWNLOADER THREAD: ", "RUN");
+            // TODO: fix initialization of youtube downloader object -- weird error when attempting initialization
+//            try{
+//                downloader = new WGet(new URL("https://www.youtube.com/watch?v=i_y-6z02rY8"), new File(home));
+//            } catch (MalformedURLException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 }
