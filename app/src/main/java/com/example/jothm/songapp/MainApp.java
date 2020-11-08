@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.github.axet.wget.WGet;
 import com.mpatric.mp3agic.ID3v24Tag;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
@@ -15,9 +14,10 @@ import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.OutputStream;
 
 public class MainApp extends AppCompatActivity {
 
@@ -25,14 +25,12 @@ public class MainApp extends AppCompatActivity {
     ID3v24Tag tags;
     ImageHandler albumImg;
     File rawmp3;
-    WGet downloader;
-    String home;
+    public static String home = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_app);
-        home = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
         rawmp3 = new File(home+"/song.mp3");
 
         if(rawmp3.exists()) Log.d("Mp3", "exists");
@@ -52,8 +50,6 @@ public class MainApp extends AppCompatActivity {
         } catch (InvalidDataException e) {
             e.printStackTrace();
         }
-
-        new mp3Downloader().start();
 
         tags = new ID3v24Tag();
         tags.setAlbum("album");
@@ -82,18 +78,32 @@ public class MainApp extends AppCompatActivity {
     }
 
     public void downloadMP3(View view){
-        downloader.download();
+        String url = "https://www.youtube.com/watch?v=i_y-6z02rY8";
+        new mp3Downloader().execute(url);
     }
 
-    private class mp3Downloader extends Thread{
-        public void run(){
-            Log.d("DOWNLOADER THREAD: ", "RUN");
-            // TODO: fix initialization of youtube downloader object -- weird error when attempting initialization
-//            try{
-//                downloader = new WGet(new URL("https://www.youtube.com/watch?v=i_y-6z02rY8"), new File(home));
-//            } catch (MalformedURLException e) {
-//                e.printStackTrace();
-//            }
+    private class mp3Downloader extends AsyncTask<String, Void, File> {
+
+        private Exception e;
+
+        public File doInBackground(String... urls) {
+            try {
+                File out = new File(home + "/out.mp3");
+                OutputStream os = new FileOutputStream(out);
+                Log.d("url:::", urls[0]);
+                os.write(YoutubeHandler.youtubeToMP3(urls[0]));
+                os.close();
+                Log.d("Download:::", "complete!");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(File out) {
         }
     }
 }
